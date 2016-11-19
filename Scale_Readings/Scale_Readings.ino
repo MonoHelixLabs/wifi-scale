@@ -13,6 +13,12 @@
  5V -> VCC
  GND -> GND
 
+ WemosD1mini setup:
+ digital pin 2 -> HX711 CLK
+ digital 3 -> DOUT
+ 3.3V -> VCC
+ GND -> GND
+
  Adafruit Feather Huzzah ESP 8266 setup:
  SCL -> HX711 CLK
  SDA -> DOUT
@@ -23,21 +29,24 @@
 
 #include "HX711.h"
 
-#define calibration_factor -2007.0 //Use value from calibration sketch
+#define calibration_factor 2007.0 //Use value from calibration sketch
 
 // Use the following for Arduino Uno:
 //#define DOUT  3
 //#define CLK  2
+// Use the following for WemosD1mini:
+#define DOUT  D3
+#define CLK  D2
 // Use the following for Adafruit Huzzah: 
-#define DOUT  4
-#define CLK  5
+//#define DOUT  4
+//#define CLK  5
 
 HX711 scale(DOUT, CLK);
 
 void setup() {
   // Use the following for Arduino:
   //Serial.begin(9600);
-  // Use the following for Adafruit Huzzah:
+  // Use the following for Adafruit Huzzah or WemosD1mini:
   Serial.begin(115200);
   
   Serial.println("Scale demo");

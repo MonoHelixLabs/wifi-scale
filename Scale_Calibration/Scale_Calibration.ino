@@ -21,11 +21,26 @@
  5V -> VCC
  GND -> GND
 
+ WemosD1mini setup:
+ digital pin 2 -> HX711 CLK
+ digital 3 -> DOUT
+ 3.3V -> VCC
+ GND -> GND
+
  Adafruit Feather Huzzah ESP 8266 setup:
  SCL -> HX711 CLK
  SDA -> DOUT
  3V -> VCC
  GND -> GND
+
+ A note on using WemosD1mini:
+ We experienced some issues with the Wemos D1 Mini in that we got the reset message.
+ Looking over others' work we saw that the issues could be related to Serial - and 
+ seems to be the case. As we couldn't get this code to work with the Wemos we started
+ commenting some of the Serial prints, adding delays etc. until it started working. 
+ However, when we removed the comments (thus the original code) it still worked, so 
+ we don't have a clear understanding of why it did not work before, just that the
+ communication with the device is somewhat finicky.
  
 */
 
@@ -34,22 +49,26 @@
 // Use the following for Arduino Uno:
 //#define DOUT  3
 //#define CLK  2
+// Use the following for WemosD1mini:
+#define DOUT D3
+#define CLK D2
 // Use the following for Adafruit Huzzah: 
-#define DOUT  4
-#define CLK  5
+//#define DOUT  4
+//#define CLK  5
 
 HX711 scale(DOUT, CLK);
 
 // Example values:
 // 1kg scale: -1902
 // 2kg scale: -2007
+// wemos: 2007
 
-float calibration_factor = -1902;
+float calibration_factor = 2007;
 
 void setup() {
   // Use the following for Arduino:
   //Serial.begin(9600);
-  // Use the following for Adafruit Huzzah:
+  // Use the following for Adafruit Huzzah or WemosD1mini:
   Serial.begin(115200);
   Serial.println("Calibration starting...");
   Serial.println("Remove all weight from scale");
@@ -76,6 +95,8 @@ void loop() {
   Serial.print(calibration_factor);
   Serial.println();
 
+  //Serial.println("looping...");
+  
   if(Serial.available())
   {
     char temp = Serial.read();
@@ -83,5 +104,8 @@ void loop() {
       calibration_factor += 1;
     else if(temp == '-' || temp == 'z')
       calibration_factor -= 1;
+    //Serial.println(calibration_factor);
   }
+
+  //delay(2000);
 }

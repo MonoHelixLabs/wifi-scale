@@ -69,7 +69,7 @@ Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO
 
 // Setup a feed for publishing.
 // Notice MQTT paths for AIO follow the form: <username>/feeds/<feedname>
-Adafruit_MQTT_Publish scaleFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/scale");
+Adafruit_MQTT_Publish scaleFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/milkscale");
 
 /*************************** Sketch Code ************************************/
 
@@ -87,6 +87,7 @@ void setup() {
   Serial.print("Connecting to ");
   Serial.println(WLAN_SSID);
 
+  WiFi.mode(WIFI_STA);
   WiFi.begin(WLAN_SSID, WLAN_PASS);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -115,6 +116,9 @@ void loop() {
   /************************* SEND SCALE VALUE ***********************************************/
 
   float scaleValue = scale.get_units();
+  if(scaleValue<0 && scaleValue>-0.5) {
+    scaleValue = 0;
+  }
   
   Serial.print(F("\nSending scale val "));
   Serial.print(scaleValue,1);
